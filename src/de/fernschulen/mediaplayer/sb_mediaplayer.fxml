@@ -32,7 +32,6 @@
           <items>
             <MenuItem mnemonicParsing="false" onAction="#pauseKlick" text="Pause" />
             <MenuItem mnemonicParsing="false" onAction="#playKlick" text="Wiedergeben" />
-            <MenuItem mnemonicParsing="false" onAction="#stoppKlick" text="Stopp" />
           </items>
         </Menu>
       </menus>
@@ -47,9 +46,9 @@
                      </image>
                   </ImageView>
                </graphic></Button>
-            <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#buttonClicked">
+            <Button fx:id="playButton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#buttonClicked">
                <graphic>
-                  <ImageView fx:id="playButton" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fx:id="playButtonImage" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@icons/play.gif" />
                      </image>
@@ -73,7 +72,7 @@
               <items>
                 <AnchorPane minHeight="0.0" minWidth="100.0" prefHeight="160.0" prefWidth="100.0">
                      <children>
-                        <ListView fx:id="liste" layoutX="-13.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                        <ListView fx:id="liste" layoutX="-13.0" onMouseClicked="#initialize" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                      </children>
                   </AnchorPane>
                 <AnchorPane minHeight="0.0" minWidth="400.0" prefHeight="160.0" prefWidth="100.0">
