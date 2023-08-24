@@ -1,5 +1,6 @@
 package de.fernschulen.mediaplayer;
 
+import java.awt.event.MouseEvent;
 import java.io.File;
 
 import javafx.application.Platform;
@@ -7,6 +8,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
@@ -36,11 +38,18 @@ public class FXMLController {
     @FXML
     private ListView<String> liste;
 
+    //für die ImageView mit dem Symbol
     @FXML
-    private ImageView playButton;
+    private ImageView playButtonImage;
+
+    @FXML
+    private Button playButton;
 
     //die Methode setzt die Bühne auf den übergebenen Wert
     public void setMeineStage(Stage meineStage) {
+        //Aufgabe 3: Da beim Start des Programms keine Dateien geladen werden,
+        //sind die Symbole für die Steuerung der Wiedergabe deaktiviert.
+        playButton.setDisable(true);
         this.meineStage = meineStage;
     }
 
@@ -67,31 +76,29 @@ public class FXMLController {
             dateiLaden(datei);
     }
 
-    //die Methode zum Stoppen
-    @FXML
-    protected void stoppKlick(ActionEvent event) {
-        //gibt es überhaupt einen Mediaplayer?
-        if (mediaplayer != null)
-            //dann anhalten
-            mediaplayer.stop();
-    }
 
     //die Methode für die Pause
     @FXML
     protected void pauseKlick(ActionEvent event) {
         //gibt es überhaupt einen Mediaplayer?
-        if (mediaplayer != null)
+        if (mediaplayer != null) {
             //dann unterbrechen
             mediaplayer.pause();
+            //Aufgabe 2: wird das Schaltflächenbild auf "Play" gesetzt.
+            playButtonImage.setImage(new Image("de/fernschulen/mediaplayer/icons/play.gif"));
+        }
     }
 
     //die Methode für die Wiedergabe
     @FXML
     protected void playKlick(ActionEvent event) {
         //gibt es überhaupt einen Mediaplayer?
-        if (mediaplayer != null)
+        if (mediaplayer != null) {
             //dann wiedergeben
             mediaplayer.play();
+            //Aufgabe 2: wird das Schaltflächenbild auf "Pause" gesetzt.
+            playButtonImage.setImage(new Image("de/fernschulen/mediaplayer/icons/pause.gif"));
+        }
     }
 
     //die Methode für das Ein- und Ausschalten der Lautstärke
@@ -119,6 +126,35 @@ public class FXMLController {
         }
     }
 
+    //hier wurde MouseEvent erstellt.
+    @FXML
+    protected void initialize() {
+        liste.setOnMouseClicked(event -> {
+            // Ausgabe 1: mit einem Klick wird die Methode eingeschaltet
+            if (event.getClickCount() == 1) {
+                //Ausgabe 1: Die Variable selectedMediaPath wurde erstellt,
+                //um die ausgewählte Datei in der Liste zu halten.
+                String selectedMediaPath = liste.getSelectionModel().getSelectedItem();
+                if (selectedMediaPath != null) {
+                    mediaplayer.stop();
+                    Media medium = new Media(selectedMediaPath);
+                    mediaplayer = new MediaPlayer(medium);
+                    mediaview.setMediaPlayer(mediaplayer);
+                    //die Wiedergabe starten
+                    mediaplayer.play();
+
+                    //Aufgabe 1:Die Methode "clearSelection" wurde verwendet,
+                    //damit keine ausgewählte Datei in der Liste vorhanden ist.
+                    //Andernfalls wird der MediaPlayer neu gestartet, wenn Sie mit der Maus irgendwo klicken.
+                    liste.getSelectionModel().clearSelection();
+                    //Ausgabe 2:Wenn eine Datei geladen ist und der MediaPlayer läuft,
+                    //wird das Schaltflächenbild auf "Pause" gesetzt.
+                    playButtonImage.setImage(new Image("de/fernschulen/mediaplayer/icons/pause.gif"));
+                }
+            }
+        });
+    }
+
     ////die Methode für Play- und PauseImage
     @FXML
     protected void buttonClicked(ActionEvent event) {
@@ -142,7 +178,7 @@ public class FXMLController {
             //Ausgabe 2:das Bild erzeugen und anzeigen
             File buttonBildDatei = new File(buttonDateiName);
             Image bild = new Image(buttonBildDatei.toURI().toString());
-            playButton.setImage(bild);
+            playButtonImage.setImage(bild);
 
         }
     }
@@ -161,7 +197,7 @@ public class FXMLController {
             //dann anhalten
             mediaplayer.stop();
             //Ausgabe 2: hier wurde die Schaltflächenanzeige auf 'Play' geändert
-            playButton.setImage(new Image("de/fernschulen/mediaplayer/icons/play.gif"));
+            playButtonImage.setImage(new Image("de/fernschulen/mediaplayer/icons/play.gif"));
         }
         //Ausgabe 1: Die Methode "contains" wird verwendet, um zu prüfen,
         //ob die ausgewählte Datei in der Liste steht.
@@ -174,10 +210,12 @@ public class FXMLController {
                 mediaview.setMediaPlayer(mediaplayer);
                 //die Wiedergabe starten
                 mediaplayer.play();
+                //Ausgabe 3: hier wurde die Symbole für die Steuerung der Wiedergabe wieder aktiviert.
+                playButton.setDisable(false);
 
                 //Ausgabe 2:Wenn eine Datei geladen ist und der MediaPlayer läuft,
                 //wird das Schaltflächenbild auf "Pause" gesetzt.
-                playButton.setImage(new Image("de/fernschulen/mediaplayer/icons/pause.gif"));
+                playButtonImage.setImage(new Image("de/fernschulen/mediaplayer/icons/pause.gif"));
 
                 //den Pfad in das Listenfeld eintragen
                 liste.getItems().add(mediaPath);
@@ -194,7 +232,7 @@ public class FXMLController {
             }
         } else {
             //Ausgabe 1: hier wird eine Fehlermeldung erzeugt, wenn die ausgewählte Datei in der Liste steht.
-            Alert errorDialog = new Alert(AlertType.ERROR, "Ausgewählte Datei ist schon im Liste");
+            Alert errorDialog = new Alert(AlertType.ERROR, "Die ausgewählte Datei ist bereits vorhanden.");
             errorDialog.setHeaderText("Error");
             errorDialog.initOwner(meineStage);
             errorDialog.showAndWait();
