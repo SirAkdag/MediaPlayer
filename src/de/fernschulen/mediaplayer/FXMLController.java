@@ -1,6 +1,6 @@
 package de.fernschulen.mediaplayer;
 
-import java.awt.event.MouseEvent;
+import javafx.scene.input.MouseEvent;
 import java.io.File;
 
 import javafx.application.Platform;
@@ -20,7 +20,6 @@ import javafx.scene.media.MediaView;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.Image;
 
-import javax.swing.*;
 
 public class FXMLController {
     //für die Bühne
@@ -42,6 +41,7 @@ public class FXMLController {
     @FXML
     private ImageView playButtonImage;
 
+    //zum Deaktivieren der Wiedergabetaste.
     @FXML
     private Button playButton;
 
@@ -129,32 +129,27 @@ public class FXMLController {
     //hier wurde MouseEvent erstellt.
     @FXML
     protected void initialize() {
-        liste.setOnMouseClicked(event -> {
-            // Ausgabe 1: mit einem Klick wird die Methode eingeschaltet
+        liste.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
             if (event.getClickCount() == 1) {
-                //Ausgabe 1: Die Variable selectedMediaPath wurde erstellt,
-                //um die ausgewählte Datei in der Liste zu halten.
                 String selectedMediaPath = liste.getSelectionModel().getSelectedItem();
                 if (selectedMediaPath != null) {
-                    mediaplayer.stop();
+                    if (mediaplayer != null) {
+                        mediaplayer.stop();
+                    }
                     Media medium = new Media(selectedMediaPath);
                     mediaplayer = new MediaPlayer(medium);
                     mediaview.setMediaPlayer(mediaplayer);
-                    //die Wiedergabe starten
                     mediaplayer.play();
 
-                    //Aufgabe 1:Die Methode "clearSelection" wurde verwendet,
-                    //damit keine ausgewählte Datei in der Liste vorhanden ist.
-                    //Andernfalls wird der MediaPlayer neu gestartet, wenn Sie mit der Maus irgendwo klicken.
+                    // Aufgabe 1: Die Methode "clearSelection()" wurde verwendet,
+                    // damit keine ausgewählte Datei in der Liste vorhanden ist.
+                    //Anderfalls wird der MediaPlayer neu gestartet, wenn man mit der Maus irgendwo klickt.
                     liste.getSelectionModel().clearSelection();
-                    //Ausgabe 2:Wenn eine Datei geladen ist und der MediaPlayer läuft,
-                    //wird das Schaltflächenbild auf "Pause" gesetzt.
                     playButtonImage.setImage(new Image("de/fernschulen/mediaplayer/icons/pause.gif"));
                 }
             }
         });
     }
-
     ////die Methode für Play- und PauseImage
     @FXML
     protected void buttonClicked(ActionEvent event) {
